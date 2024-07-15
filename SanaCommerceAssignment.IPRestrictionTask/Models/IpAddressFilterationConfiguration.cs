@@ -1,0 +1,2 @@
+﻿namespace SanaCommerceAssignment.IPRestrictionTask.Infrastructure.Models;
+public record IpAddressFilterationConfiguration(int StausCode, string BlacklistedIpAddresses);

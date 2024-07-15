@@ -1,0 +1,119 @@
+﻿@{
+
+}
+
+<style>
+    .margin-top-20 {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="card">
+    <div class="card-header">
+        <h4>Admin</h4>
+        <span>Configure user profile fields</span>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-info" id="btnAddField">Add Field</button>
+            </div>
+        </div>
+        <div class="row margin-top-20">
+            <div class="col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="fieldsTable">
+                        <thead>
+                            <tr>
+                                <th>Field Title</th>
+                                <th>Editor / Display Control</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row margin-top-20">
+            <div class="col-md-4">
+                <button class="btn btn-primary" id="btnSave">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+<script type="text/javascript">
+    $('#btnAddField').click(function () {
+
+        var table = document.getElementById('fieldsTable').getElementsByTagName('tbody')[0];
+        var newRow = table.insertRow();
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+
+        cell1.innerHTML = '<input type="text" class="form-control" name="textInput">';
+        cell2.innerHTML = `<select class="form-control" name="dropdown">
+                                            <option value="">Select Option</option>
+                                            <option value="Text">Text</option>
+                                            <option value="Date">Date</option>
+                                            <option value="Numeric">Numeric</option>
+                                            <option value="TextReadOnly">TextReadOnly</option>
+                                            <option value="DateReadOnly">DateReadOnly</option>
+                                            <option value="NumericReadOnly">NumericReadOnly</option>
+                                        </select>`;
+        cell3.innerHTML = '<button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button>';
+
+    });
+    $('#btnSave').click(function () {
+        var table = document.getElementById('fieldsTable');
+        var data = [];
+
+        for (var i = 1; i < table.rows.length; i++) {
+            var row = table.rows[i];
+            var fieldName = row.cells[0].querySelector('input').value;
+            var fieldType = row.cells[1].querySelector('select').value;
+
+            if (fieldName === '' || fieldType === '') continue;
+            var rowData = {
+                Name: fieldName,
+                Type: fieldType
+            };
+            data.push(rowData);
+        }
+
+        console.log(data);
+
+        fetch('/Home/Admin', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert(data.message);
+                    return;
+                }
+
+                alert(data.message);
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error submitting data:', error);
+                // You can add further error handling here
+            });
+
+        
+
+    });
+    function deleteRow(btn) {
+        var row = btn.parentNode.parentNode;
+        row.parentNode.removeChild(row);
+    }
+
+</script>

@@ -1,0 +1,6 @@
+@SanaCommerceAssignment.ConfigurableEditor.API_HostAddress = http://localhost:5069
+
+GET {{SanaCommerceAssignment.ConfigurableEditor.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

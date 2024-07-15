@@ -1,0 +1,18 @@
+WITH LatestAttempts AS (
+    SELECT 
+        ROW_NUMBER() OVER (PARTITION BY OrderId ORDER BY CreatedDate DESC) AS AttemptNo,
+        OrderId,
+        CreatedDate,
+        Data
+    FROM 
+        OrderTransactions
+)
+SELECT 
+    OrderId,
+    CreatedDate,
+    JSON_VALUE(Data, '$.TotalAmount') AS TotalAmount,
+    JSON_VALUE(Data, '$.Currency') AS Currency
+FROM 
+    LatestAttempts
+WHERE 
+    AttemptNo = 1;
