@@ -14,6 +14,6 @@ Projects explanation:
        - To use Client side, Use Client credentials: (Username: client@abc.com, Password: Password)
     - SanaCommerceAssignment.ConfigurableEditor.Shared   --> Contains Share Models
 - OrderTransactionAssignment
--   - Script.txt  --> Contains the Task Select script.
+    - Script.txt  --> Contains the Task Select script.
 - SanaCommerceAssignment.DataServiceTask   --> Data Service Task
 - SanaCommerceAssignment.IPRestrictionTask   --> IP Address Restriction Task
