@@ -13,10 +13,11 @@ public interface ITemplateService
     Task<ServiceResult> PostAsync(string pageId, List<FieldViewModel> fields, CancellationToken cancellationToken);
 }
 
-public class TemplateService : ITemplateService
+public class TemplateService : IHttpService, ITemplateService
 {
-    private readonly HttpClient _client;
-    public TemplateService(IHttpClientFactory httpClientFactory)
+    public TemplateService(
+        IHttpClientFactory httpClientFactory, 
+        IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
     {
         _client = httpClientFactory.CreateClient(ApiClientConstants.Server);
     }
@@ -25,6 +26,7 @@ public class TemplateService : ITemplateService
     {
         try
         {
+            AuthenticateRequest();
             var response = await _client.GetAsync(string.Format("api/template/{0}", pageId), cancellationToken);
             if (!response.IsSuccessStatusCode)
                 return new(false, "Failed");
@@ -52,6 +54,7 @@ public class TemplateService : ITemplateService
 
             CreateTemplateRequest request = new(pageId, requestFields);
             var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            AuthenticateRequest();
             var response = await _client.PostAsync("api/template", content, cancellationToken);
             if (!response.IsSuccessStatusCode)
                 return new(false, "Failed");

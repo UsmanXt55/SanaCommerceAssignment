@@ -2,8 +2,8 @@
 using SanaCommerceAssignment.ConfigurableEditor.Portal.Infrastructure.Constants;
 using SanaCommerceAssignment.ConfigurableEditor.Portal.Infrastructure.Extensions;
 using SanaCommerceAssignment.ConfigurableEditor.Portal.Infrastructure.Services;
-using SanaCommerceAssignment.ConfigurableEditor.Portal.Models;
 using SanaCommerceAssignment.ConfigurableEditor.Portal.Models.ViewModels;
+using SanaCommerceAssignment.ConfigurableEditor.Shared.DTOs.Users;
 using SanaCommerceAssignment.ConfigurableEditor.Shared.Enums;
 namespace SanaCommerceAssignment.ConfigurableEditor.Portal.Controllers;
 public class AccountsController(
@@ -16,20 +16,20 @@ public class AccountsController(
     }
 
     [HttpPost]
-    public IActionResult Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginViewModel model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return View(model);
 
-        var result = accountsService.AuthenticateUser(model);
+        var result =  await accountsService.AuthenticateUser(model, cancellationToken);
         if (!result.Success)
         {
-
+            throw new UnauthorizedAccessException("Invalid credentials");
         }
 
-        var account = (AccountsModel)result.Obj!;
-        HttpContext.Session.SetObjectAsJson(SessionConstants.Token, account);
-        if (account.Type == UserTypeEnum.Client)
+        var token = (TokenDto)result.Obj!;
+        HttpContext.Session.SetObjectAsJson(SessionConstants.Token, token);
+        if (token.Type == UserTypeEnum.Client)
             return RedirectToAction("Index", "Home");
         else
             return RedirectToAction("Admin", "Home");

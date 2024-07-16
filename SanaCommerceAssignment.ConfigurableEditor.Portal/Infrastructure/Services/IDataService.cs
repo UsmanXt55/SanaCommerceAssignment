@@ -10,10 +10,11 @@ public interface IDataService
     Task<ServiceResult> PostAsync(List<CreateData> dataList, CancellationToken cancellationToken);
 }
 
-public class DataService : IDataService
+public class DataService : IHttpService, IDataService
 {
-    private readonly HttpClient _client;
-    public DataService(IHttpClientFactory httpClientFactory)
+    public DataService(
+        IHttpClientFactory httpClientFactory,
+        IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
     {
         _client = httpClientFactory.CreateClient(ApiClientConstants.Server);
     }
@@ -23,6 +24,7 @@ public class DataService : IDataService
         try
         {
             var content = new StringContent(JsonConvert.SerializeObject(dataList), Encoding.UTF8, "application/json");
+            AuthenticateRequest();
             var response = await _client.PostAsync("api/data", content, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {

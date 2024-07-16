@@ -3,6 +3,7 @@ using SanaCommerceAssignment.ConfigurableEditor.Portal.Infrastructure.Middleware
 using SanaCommerceAssignment.ConfigurableEditor.Portal.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(options => { options.IdleTimeout = TimeSpan.FromMinutes(30); });
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddTransient<IAccountsService, AccountsService>();

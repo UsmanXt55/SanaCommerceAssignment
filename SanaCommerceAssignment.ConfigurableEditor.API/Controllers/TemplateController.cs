@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SanaCommerceAssignment.ConfigurableEditor.API.Infrastructure.Attributes;
 using SanaCommerceAssignment.ConfigurableEditor.API.Infrastructure.Services;
 using SanaCommerceAssignment.ConfigurableEditor.Shared.DTOs.Templates;
+using SanaCommerceAssignment.ConfigurableEditor.Shared.Enums;
 using SanaCommerceAssignment.ConfigurableEditor.Shared.Requests.Templates;
 using SanaCommerceAssignment.ConfigurableEditor.Shared.Response;
 using SanaCommerceAssignment.ConfigurableEditor.Shared.Response.Templates;
@@ -11,6 +13,7 @@ public class TemplateController(
     ITemplateService templateService) : BaseController
 {
     [HttpGet("{pageId}")]
+    [AuthorizeUserType(UserTypeEnum.Client)]
     public async Task<IActionResult> Get(string pageId, CancellationToken cancellationToken)
     {
         var result = await templateService.GetAsync(pageId, cancellationToken);
@@ -22,6 +25,7 @@ public class TemplateController(
     }
 
     [HttpPost]
+    [AuthorizeUserType(UserTypeEnum.Admin)]
     public async Task<IActionResult> Post(CreateTemplateRequest request, CancellationToken cancellationToken)
     {
         List<BaseDto> dtoList = new();
